@@ -1,0 +1,22 @@
+<h1>Usuarios</h1>
+</br>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.name }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">No hay usuarios</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
