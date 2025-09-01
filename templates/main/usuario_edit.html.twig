@@ -1,0 +1,9 @@
+<a href="/usuarios/{{ usuario.id }}">Atrás</a>
+<br>
+<h1>{{ usuario.nombre }}</h1>
+<p>Usuario {{ usuario.nombre }} con id {{ usuario.id }} </p>
+<br>
+<form action="/usuarios/{{ usuario.id }}/edit" method="post">
+    <input type="text" name="nombre" value="{{ usuario.nombre }}">
+    <button type="submit">Guardar</button>
+</form>

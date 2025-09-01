@@ -45,7 +45,7 @@ class UsuariosController extends AbstractController
     }
 
     // Edit By Id
-    #[Route('/edit/{id<\d+>}', methods: ['GET'])]
+    #[Route('/editar/{id<\d+>}', methods: ['GET'])]
     public function editUser($id, UsuariosRepository $usuariosRepository): Response
     {
         $usuario = $usuariosRepository->findById($id);
