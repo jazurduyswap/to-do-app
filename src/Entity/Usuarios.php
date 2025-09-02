@@ -19,9 +19,9 @@ class Usuarios
     private ?string $nombre = null;
 
     /**
-     * @var Collection<int, grupo>
+     * @var Collection<int, Grupo>
      */
-    #[ORM\ManyToMany(targetEntity: grupo::class, inversedBy: 'usuarios')]
+    #[ORM\ManyToMany(targetEntity: Grupo::class, inversedBy: 'usuarios')]
     private Collection $grupos;
 
     #[ORM\Column(length: 150)]
@@ -63,14 +63,14 @@ class Usuarios
     }
 
     /**
-     * @return Collection<int, grupo>
+     * @return Collection<int, Grupo>
      */
     public function getGrupos(): Collection
     {
         return $this->grupos;
     }
 
-    public function addGrupo(grupo $grupo): static
+    public function addGrupo(Grupo $grupo): static
     {
         if (!$this->grupos->contains($grupo)) {
             $this->grupos->add($grupo);
@@ -79,7 +79,7 @@ class Usuarios
         return $this;
     }
 
-    public function removeGrupo(grupo $grupo): static
+    public function removeGrupo(Grupo $grupo): static
     {
         $this->grupos->removeElement($grupo);
 
