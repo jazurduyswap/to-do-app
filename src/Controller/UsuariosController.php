@@ -19,7 +19,7 @@ class UsuariosController extends AbstractController
     public function getCollection(UsuariosRepository $usuariosRepository): Response
     {
         $usuarios = $usuariosRepository->findAll();
-        return $this->render('usuarios/usuarios.html.twig', [
+        return $this->render('usuarios/usuarios_index.html.twig', [
             'usuarios' => $usuarios
         ]);
     }
@@ -32,7 +32,7 @@ class UsuariosController extends AbstractController
         if (!$usuario) {
             throw $this->createNotFoundException('Usuario not found');
         }
-        return $this->render('usuarios/usuario.html.twig', [
+        return $this->render('usuarios/usuarios_mostrar.html.twig', [
             'usuario' => $usuario
         ]);
     }
@@ -41,7 +41,7 @@ class UsuariosController extends AbstractController
     #[Route('/nuevo', name: "usuarios_nuevo", methods: ['GET'])]
     public function newUser(): Response
     {
-        return $this->render('usuarios/usuario_new.html.twig', []);
+        return $this->render('usuarios/usuarios_nuevo.html.twig', []);
     }
 
     // Edit By Id
@@ -52,13 +52,13 @@ class UsuariosController extends AbstractController
         if (!$usuario) {
             throw $this->createNotFoundException('Usuario not found');
         }
-        return $this->render('usuarios/usuario_edit.html.twig', [
+        return $this->render('usuarios/usuarios_editar.html.twig', [
             'usuario' => $usuario
         ]);
     }
 
     // Delete User
-    #[Route('/borrar/{id<\d+>}', name: "usuario_borrar", methods: ['POST'])]
+    #[Route('/borrar/{id<\d+>}', name: "usuarios_borrar", methods: ['POST'])]
     public function delete($id, UsuariosRepository $usuariosRepository, ManagerRegistry $doctrine): Response
     { 
 
@@ -74,7 +74,7 @@ class UsuariosController extends AbstractController
     }
 
     // Create a new User
-    #[Route('', name: "usuario_crear", methods: ['POST'])]
+    #[Route('', name: "usuarios_crear", methods: ['POST'])]
     public function create(Request $request, ManagerRegistry $doctrine): Response
     {
         $em = $doctrine->getManager();

@@ -1,0 +1,9 @@
+<a href="{{ path('usuarios_index') }}">Atrás</a>
+<br>
+<h1>{{ usuario.nombre }}</h1>
+<p>Usuario {{ usuario.nombre }} con id {{ usuario.id }} </p>
+<br>
+<a href="{{ path('usuarios_editar', { id: usuario.id }) }}">Editar</a>
+<form method="post" action="{{ path('usuarios_borrar', { id: usuario.id }) }}" onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+    <button type="submit">Eliminar</button>
+</form>
