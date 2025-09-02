@@ -1,9 +1,18 @@
 {% block body %}
 <h1>TO DO APP </h1> 
+{% if is_granted('ROLE_ADMIN') %}
+<h1>Bienvenido administrador</h1>
+{% endif %}
 <br>
-<a href="/usuarios">Usuarios</a>
+{% if is_granted('ROLE_ADMIN') %}
+<a href="{{ path('usuarios_index') }}">Usuarios</a>
 <br>
-<a href="/grupos">Grupos</a>
+{% endif %}
+<a href="{{ path('grupo_index') }}">Grupos</a>
 <br>
-<a href="/tareas">Tareas</a>
+<a href="{{ path('task_index') }}">Tareas</a>
+<br>
+<a href="{{ path('tag_index') }}">Tags</a>
+<br>
+<a href="{{ path('app_logout') }}">Cerrar sesión</a>
 {% endblock %}

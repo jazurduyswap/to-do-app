@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class TagController extends AbstractController
 {
-    #[Route('/tag', name: 'app_tag')]
+    #[Route('/tag', name: 'tag_index')]
     public function index(): Response
     {
         return $this->render('tag/index.html.twig', [

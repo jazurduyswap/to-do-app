@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class GrupoController extends AbstractController
 {
-    #[Route('/grupo', name: 'app_grupo')]
+    #[Route('/grupo', name: 'grupo_index')]
     public function index(): Response
     {
         return $this->render('grupo/index.html.twig', [
