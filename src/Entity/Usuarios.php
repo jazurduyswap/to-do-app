@@ -27,6 +27,12 @@ class Usuarios
     #[ORM\Column(length: 150)]
     private ?string $rol = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $email = null;
+
     public function __construct()
     {
         $this->grupos = new ArrayCollection();
@@ -88,6 +94,30 @@ class Usuarios
     public function setRol(string $rol): static
     {
         $this->rol = $rol;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): static
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
 
         return $this;
     }
