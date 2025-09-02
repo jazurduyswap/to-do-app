@@ -3,7 +3,8 @@
 <h1>{{ usuario.nombre }}</h1>
 <p>Usuario {{ usuario.nombre }} con id {{ usuario.id }} </p>
 <br>
-<form action="/usuarios/{{ usuario.id }}/edit" method="post">
+<form action="{{ path('usuario_crear', { id: usuario.id }) }}" method="post">
+    <input type="hidden" name="id" value="{{ usuario.id }}">
     <input type="text" name="nombre" value="{{ usuario.nombre }}">
     <button type="submit">Guardar</button>
 </form>
