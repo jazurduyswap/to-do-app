@@ -6,9 +6,10 @@ use App\Repository\UsuariosRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UsuariosRepository::class)]
-class Usuarios
+class Usuarios implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -120,5 +121,23 @@ class Usuarios
         $this->email = $email;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        // Devuelve los roles del usuario. Puedes cambiar esto más adelante.
+        return ['ROLE_USER'];
+    }
+
+    public function getUserIdentifier(): string
+    {
+        // Este debe devolver el identificador único del usuario (ej. email o username)
+        return $this->email;
+    }
+
+    public function eraseCredentials() : void
+    {
+        // Si tu entidad guarda datos temporales sensibles, límpialos aquí.
+        // Si no, déjalo vacío.
     }
 }
