@@ -6,10 +6,13 @@ use App\Repository\UsuariosRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UsuariosRepository::class)]
-class Usuarios implements UserInterface
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,8 +28,8 @@ class Usuarios implements UserInterface
     #[ORM\ManyToMany(targetEntity: Grupo::class, inversedBy: 'usuarios')]
     private Collection $grupos;
 
-    #[ORM\Column(length: 150)]
-    private ?string $rol = null;
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
@@ -87,17 +90,20 @@ class Usuarios implements UserInterface
         return $this;
     }
 
-    public function getRol(): ?string
+    public function getRoles(): array
     {
-        return $this->rol;
+        $roles = $this->roles;
+        // ROLE_USER por defecto
+        $roles[] = 'ROLE_USER';
+        return array_unique($roles);
     }
 
-    public function setRol(string $rol): static
+    public function setRoles(array $roles): static
     {
-        $this->rol = $rol;
-
+        $this->roles = $roles;
         return $this;
     }
+
 
     public function getPassword(): ?string
     {
@@ -122,13 +128,7 @@ class Usuarios implements UserInterface
 
         return $this;
     }
-
-    public function getRoles(): array
-    {
-        // Devuelve los roles del usuario. Puedes cambiar esto más adelante.
-        return ['ROLE_USER'];
-    }
-
+    
     public function getUserIdentifier(): string
     {
         // Este debe devolver el identificador único del usuario (ej. email o username)
