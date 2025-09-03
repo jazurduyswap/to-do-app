@@ -33,6 +33,9 @@ class Task
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'tasks')]
     private Collection $tags;
 
+    #[ORM\ManyToOne(inversedBy: 'tasks')]
+    private ?Usuarios $usuario = null;
+
     public function __construct()
     {
         $this->childTasks = new ArrayCollection();
@@ -116,6 +119,18 @@ class Task
     public function removeTag(Tag $tag): static
     {
         $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getUsuario(): ?Usuarios
+    {
+        return $this->usuario;
+    }
+
+    public function setUsuario(?Usuarios $usuario): static
+    {
+        $this->usuario = $usuario;
 
         return $this;
     }

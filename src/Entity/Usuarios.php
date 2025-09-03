@@ -37,10 +37,17 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $email = null;
 
+    /**
+     * @var Collection<int, Task>
+     */
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'usuario')]
+    private Collection $tasks;
+
     public function __construct()
     {
         $this->grupos = new ArrayCollection();
         $this->roles = [];
+        $this->tasks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -157,5 +164,35 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Si tu entidad guarda datos temporales sensibles, límpialos aquí.
         // Si no, déjalo vacío.
+    }
+
+    /**
+     * @return Collection<int, Task>
+     */
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    public function addTask(Task $task): static
+    {
+        if (!$this->tasks->contains($task)) {
+            $this->tasks->add($task);
+            $task->setUsuario($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): static
+    {
+        if ($this->tasks->removeElement($task)) {
+            // set the owning side to null (unless already changed)
+            if ($task->getUsuario() === $this) {
+                $task->setUsuario(null);
+            }
+        }
+
+        return $this;
     }
 }
