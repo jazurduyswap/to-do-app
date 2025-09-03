@@ -167,4 +167,18 @@ class UsuariosRepository extends ServiceEntityRepository
         return $usuarios;
     }
 
+    /**
+     * Encuentra usuarios que NO están en un grupo específico
+     */
+    public function findUsuariosNoEnGrupo(int $grupoId): array
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.grupos', 'g', 'WITH', 'g.id = :grupoId')
+            ->where('g.id IS NULL')
+            ->setParameter('grupoId', $grupoId)
+            ->orderBy('u.nombre', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 }
