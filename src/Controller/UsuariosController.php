@@ -10,6 +10,9 @@ use App\Repository\UsuariosRepository;
 use App\Entity\Usuarios;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use App\Form\UsuariosType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/usuarios')]
 class UsuariosController extends AbstractController
@@ -18,7 +21,7 @@ class UsuariosController extends AbstractController
     #[Route('', name: "usuarios_index", methods: ['GET'])]
     public function getCollection(UsuariosRepository $usuariosRepository): Response
     {
-        $usuarios = $usuariosRepository->findAll();
+        $usuarios = $usuariosRepository->findAllForDisplay();
         return $this->render('usuarios/usuarios_index.html.twig', [
             'usuarios' => $usuarios
         ]);
@@ -28,7 +31,7 @@ class UsuariosController extends AbstractController
     #[Route('/{id<\d+>}', name: "usuarios_mostrar", methods: ['GET'])]
     public function getById($id, UsuariosRepository $usuariosRepository): Response
     {
-        $usuario = $usuariosRepository->findById($id);
+        $usuario = $usuariosRepository->findByIdForDisplay($id);
         if (!$usuario) {
             throw $this->createNotFoundException('Usuario not found');
         }
@@ -38,22 +41,73 @@ class UsuariosController extends AbstractController
     }
 
     // New User
-    #[Route('/nuevo', name: "usuarios_nuevo", methods: ['GET'])]
-    public function newUser(): Response
+    #[Route('/nuevo', name: "usuarios_nuevo", methods: ['GET', 'POST'])]
+    public function newUser(Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher): Response
     {
-        return $this->render('usuarios/usuarios_nuevo.html.twig', []);
+        $usuario = new Usuarios();
+        $form = $this->createForm(UsuariosType::class, $usuario);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Usuarios $usuario */
+            $usuario = $form->getData();
+
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            if (!empty($plainPassword)) {
+                // Hashear la contraseña
+                $hashedPassword = $passwordHasher->hashPassword($usuario, $plainPassword);
+                $usuario->setPassword($hashedPassword);
+            }
+
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($usuario);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Usuario creado correctamente.');
+            return $this->redirectToRoute('usuarios_mostrar', ['id' => $usuario->getId()]);
+        }
+
+        return $this->render('usuarios/usuarios_nuevo.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     // Edit By Id
-    #[Route('/editar/{id<\d+>}', name: "usuarios_editar", methods: ['GET'])]
-    public function editUser($id, UsuariosRepository $usuariosRepository): Response
+    #[Route('/editar/{id<\d+>}', name: "usuarios_editar", methods: ['GET', 'POST'])]
+    public function editUser($id, UsuariosRepository $usuariosRepository, Request $request, ManagerRegistry $doctrine, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $usuario = $usuariosRepository->findById($id);
+        $usuario = $usuariosRepository->findById($id); // Usar versión completa para edición
         if (!$usuario) {
             throw $this->createNotFoundException('Usuario not found');
         }
+        
+        $form = $this->createForm(UsuariosType::class, $usuario);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Usuarios $usuario */
+            $usuario = $form->getData();
+
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            if (!empty($plainPassword)) {
+                // Solo hashea si se ha enviado una nueva contraseña
+                $hashedPassword = $passwordHasher->hashPassword($usuario, $plainPassword);
+                $usuario->setPassword($hashedPassword);
+            }
+
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($usuario);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Usuario actualizado correctamente.');
+            return $this->redirectToRoute('usuarios_mostrar', ['id' => $usuario->getId()]);
+        }
+        
         return $this->render('usuarios/usuarios_editar.html.twig', [
-            'usuario' => $usuario
+            'usuario' => $usuario,
+            'form' => $form->createView()
         ]);
     }
 
@@ -61,9 +115,8 @@ class UsuariosController extends AbstractController
     #[Route('/borrar/{id<\d+>}', name: "usuarios_borrar", methods: ['POST'])]
     public function delete($id, UsuariosRepository $usuariosRepository, ManagerRegistry $doctrine): Response
     { 
-
         $em = $doctrine->getManager();
-        $usuario = $usuariosRepository->findById($id);
+        $usuario = $usuariosRepository->findByIdComplete($id); // Usar versión completa para eliminación
         if (!$usuario) {
             throw $this->createNotFoundException('Usuario not found');
         }
@@ -71,45 +124,5 @@ class UsuariosController extends AbstractController
         $em->flush();
         $this->addFlash('success', 'Usuario eliminado correctamente.');
         return $this->redirectToRoute('usuarios_index');
-    }
-
-    // Create a new User
-    #[Route('', name: "usuarios_crear", methods: ['POST'])]
-    public function create(Request $request, ManagerRegistry $doctrine): Response
-    {
-        $em = $doctrine->getManager();
-
-        $id = trim((string) $request->request->get('id', ''));
-        $nombre = trim((string) $request->request->get('nombre', ''));
-        if ($nombre === '') {
-            $this->addFlash('error', 'El nombre es obligatorio.');
-            return $this->redirectToRoute('usuarios_new');
-        }
-
-        // Crea Usuario
-        if(!$id || $id ==""){
-            $usuario = new Usuarios();
-            $usuario->setNombre($nombre);
-
-            $em->persist($usuario);
-            $em->flush();
-            $this->addFlash('success', 'Usuario creado correctamente.');
-         } else {
-            // Editar usuario existente
-            $usuario = $em->getRepository(Usuarios::class)->find($id);
-
-            if (!$usuario) {
-                $this->addFlash('error', 'Usuario no encontrado.');
-                return $this->redirectToRoute('usuarios_index');
-            }
-
-            $usuario->setNombre($nombre);
-            $this->addFlash('success', 'Usuario actualizado correctamente.');
-        }
-
-        $em->flush();
-
-        return $this->redirectToRoute('usuarios_index');
-        
     }
 }
