@@ -40,6 +40,7 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->grupos = new ArrayCollection();
+        $this->roles = [];
     }
 
     public function getId(): ?int
@@ -92,10 +93,27 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
+        // Asegurar que $roles esté inicializado
+        if (!isset($this->roles)) {
+            $this->roles = [];
+        }
+        
         $roles = $this->roles;
-        // ROLE_USER por defecto
+        
+        // garantizar que cada usuario tenga al menos ROLE_USER
         $roles[] = 'ROLE_USER';
+        
         return array_unique($roles);
+    }
+
+    public function getRolesFormatted(): string
+    {
+        // Asegurar que $roles esté inicializado
+        if (!isset($this->roles)) {
+            $this->roles = [];
+        }
+        
+        return implode(', ', $this->roles);
     }
 
     public function setRoles(array $roles): static
