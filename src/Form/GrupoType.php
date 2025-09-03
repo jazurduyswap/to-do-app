@@ -16,11 +16,6 @@ class GrupoType extends AbstractType
         $builder
             ->add('nombre')
             ->add('estado')
-            ->add('usuarios', EntityType::class, [
-                'class' => Usuarios::class,
-                'choice_label' => 'id',
-                'multiple' => true,
-            ])
         ;
     }
 
