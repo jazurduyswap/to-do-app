@@ -18,14 +18,14 @@ class Task
     #[ORM\Column(length: 255)]
     private ?string $titulo = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'tasks')]
-    private ?self $padreTask = null;
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'childTasks')]
+    private ?self $parentTask = null;
 
     /**
      * @var Collection<int, self>
      */
-    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'padreTask')]
-    private Collection $tasks;
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parentTask', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $childTasks;
 
     /**
      * @var Collection<int, Tag>
@@ -35,7 +35,7 @@ class Task
 
     public function __construct()
     {
-        $this->tasks = new ArrayCollection();
+        $this->childTasks = new ArrayCollection();
         $this->tags = new ArrayCollection();
     }
 
@@ -56,14 +56,14 @@ class Task
         return $this;
     }
 
-    public function getPadreTask(): ?self
+    public function getParentTask(): ?self
     {
-        return $this->padreTask;
+        return $this->parentTask;
     }
 
-    public function setPadreTask(?self $padreTask): static
+    public function setParentTask(?self $parentTask): static
     {
-        $this->padreTask = $padreTask;
+        $this->parentTask = $parentTask;
 
         return $this;
     }
@@ -71,30 +71,28 @@ class Task
     /**
      * @return Collection<int, self>
      */
-    public function getTasks(): Collection
+    public function getChildTasks(): Collection
     {
-        return $this->tasks;
+        return $this->childTasks;
     }
 
-    public function addTask(self $task): static
+    public function addChildTask(self $task): static
     {
-        if (!$this->tasks->contains($task)) {
-            $this->tasks->add($task);
-            $task->setPadreTask($this);
+        if (!$this->childTasks->contains($task)) {
+            $this->childTasks->add($task);
+            $task->setParentTask($this);
         }
 
         return $this;
     }
 
-    public function removeTask(self $task): static
+    public function removeChildTask(self $task): static
     {
-        if ($this->tasks->removeElement($task)) {
-            // set the owning side to null (unless already changed)
-            if ($task->getPadreTask() === $this) {
-                $task->setPadreTask(null);
+        if ($this->childTasks->removeElement($task)) {
+            if ($task->getParentTask() === $this) {
+                $task->setParentTask(null);
             }
         }
-
         return $this;
     }
 
