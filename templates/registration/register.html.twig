@@ -3,22 +3,46 @@
 {% block title %}Registro{% endblock %}
 
 {% block body %}
-    <h1>Registro</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Registro</h1>
+                    
+                    {{ form_errors(registrationForm) }}
 
-    {{ form_errors(registrationForm) }}
+                    {{ form_start(registrationForm) }}
+                        {{ form_row(registrationForm.nombre, {
+                            label: 'Nombre'
+                        }) }}
+                        {{ form_row(registrationForm.email, {
+                            label: 'Email'
+                        }) }}
+                        {{ form_row(registrationForm.plainPassword, {
+                            label: 'Contraseña'
+                        }) }}
+                        {{ form_row(registrationForm.grupos, { 
+                            label: 'Grupos' 
+                        }) }}
+                        {{ form_row(registrationForm.agreeTerms, {
+                            label: 'Acepto los términos y condiciones'
+                        }) }}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.nombre, {
-            label: 'Nombre'
-        }) }}
-        {{ form_row(registrationForm.email, {
-            label: 'Email'
-        }) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Contraseña'
-        }) }}
-       {{ form_row(registrationForm.grupos, { label: 'Grupos' }) }}
-
-        <button type="submit" class="btn">Registrarse</button>
-    {{ form_end(registrationForm) }}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Registrarse</button>
+                        </div>
+                    {{ form_end(registrationForm) }}
+                    
+                    <hr>
+                    <div class="text-center">
+                        <a href="{{ path('app_login') }}" class="text-decoration-none">
+                            ¿Ya tienes una cuenta? Inicia sesión aquí
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

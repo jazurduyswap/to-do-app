@@ -1,20 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TagController!{% endblock %}
+{% block title %}Tags{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/home/jazurduy/to-do-app/src/Controller/TagController.php</code></li>
-        <li>Your template at <code>/home/jazurduy/to-do-app/templates/tag/index.html.twig</code></li>
-    </ul>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h1 class="mb-0">Tags</h1>
+                    <a href="{{ path('app_homepage') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house"></i> Inicio
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h4>Módulo de Tags</h4>
+                        <p class="mb-0">Aquí podrás gestionar las etiquetas para organizar tus tareas.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-muted">Funcionalidad en desarrollo...</p>
+                        <div class="d-grid gap-2 d-md-block">
+                            <button class="btn btn-warning" disabled>
+                                <i class="bi bi-tag"></i> Nuevo Tag
+                            </button>
+                            <button class="btn btn-outline-warning" disabled>
+                                <i class="bi bi-tags"></i> Ver Todos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

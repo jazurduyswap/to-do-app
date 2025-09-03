@@ -1,11 +1,42 @@
-<a href="/usuarios/{{ usuario.id }}">Atrás</a>
-<br>
-<h1>{{ usuario.nombre }}</h1>
-<br>
-<form action="{{ path('usuarios_crear', { id: usuario.id }) }}" method="post">
-    <input type="hidden" name="id" value="{{ usuario.id }}">
-    <input type="text" name="nombre" value="{{ usuario.nombre }}">
-    <input type="email" name="email" value="{{ usuario.email }}">
-    <input type="password" name="password" placeholder="Nueva contraseña">
-    <button type="submit">Guardar</button>
-</form>
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Usuario: {{ usuario.nombre }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h1 class="mb-0">Editar: {{ usuario.nombre }}</h1>
+                    <a href="{{ path('usuarios_mostrar', { id: usuario.id }) }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Atrás
+                    </a>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                        {{ form_row(form.nombre, {
+                            label: 'Nombre'
+                        }) }}
+                        {{ form_row(form.email, {
+                            label: 'Email'
+                        }) }}
+                        {{ form_row(form.password, {
+                            label: 'Contraseña (dejar vacío para no cambiar)'
+                        }) }}
+                        {{ form_row(form.grupos, {
+                            label: 'Grupos'
+                        }) }}
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

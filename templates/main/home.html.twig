@@ -1,18 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TO DO APP - Home{% endblock %}
+
 {% block body %}
-<h1>TO DO APP </h1> 
-{% if is_granted('ROLE_ADMIN') %}
-<h1>Bienvenido administrador</h1>
-{% endif %}
-<br>
-{% if is_granted('ROLE_ADMIN') %}
-<a href="{{ path('usuarios_index') }}">Usuarios</a>
-<br>
-{% endif %}
-<a href="{{ path('grupo_index') }}">Grupos</a>
-<br>
-<a href="{{ path('task_index') }}">Tareas</a>
-<br>
-<a href="{{ path('tag_index') }}">Tags</a>
-<br>
-<a href="{{ path('app_logout') }}">Cerrar sesión</a>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h1 class="card-title mb-0">TO DO APP</h1>
+                </div>
+                <div class="card-body">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="alert alert-info">
+                            <h4>Bienvenido administrador</h4>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid gap-2">
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('usuarios_index') }}" class="btn btn-outline-primary">
+                                <i class="bi bi-people"></i> Usuarios
+                            </a>
+                        {% endif %}
+                        <a href="{{ path('grupo_index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-collection"></i> Grupos
+                        </a>
+                        <a href="{{ path('task_index') }}" class="btn btn-outline-success">
+                            <i class="bi bi-list-task"></i> Tareas
+                        </a>
+                        <a href="{{ path('tag_index') }}" class="btn btn-outline-warning">
+                            <i class="bi bi-tags"></i> Tags
+                        </a>
+                        <hr>
+                        <a href="{{ path('app_logout') }}" class="btn btn-danger">
+                            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

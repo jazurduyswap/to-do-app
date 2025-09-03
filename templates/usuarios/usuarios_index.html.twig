@@ -1,30 +1,67 @@
-<h1>Usuarios</h1>
-</br>
-<a href="/usuarios/nuevo">Crear Usuario</a>
-<br>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for usuario in usuarios %}
-            <tr>
-                <td>{{ usuario.id }}</td>
-                <td>{{ usuario.nombre }}</td>
-                <td>{{ usuario.email }}</td>
-                <td>
-                    <a href="{{ path('usuarios_mostrar', {'id': usuario.id}) }}">Ver</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="2">No hay usuarios</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% extends 'base.html.twig' %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h1 class="mb-0">Usuarios</h1>
+                    <a href="/usuarios/nuevo" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Crear Usuario
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Roles</th>
+                                    <th>Grupos</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuario in usuarios %}
+                                    <tr>
+                                        <td>{{ usuario.id }}</td>
+                                        <td>{{ usuario.nombre }}</td>
+                                        <td>{{ usuario.email }}</td>
+                                        <td>
+                                            {% for role in usuario.roles %}
+                                                <span class="badge bg-secondary me-1">{{ role }}</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            {% for grupo in usuario.grupos %}
+                                                <span class="badge bg-info me-1">{{ grupo.nombre }}</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('usuarios_mostrar', {'id': usuario.id}) }}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i> Ver
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            No hay usuarios registrados
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
