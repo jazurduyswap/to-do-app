@@ -36,15 +36,22 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path:  ^/login, roles: PUBLIC_ACCESS }
+        # Acceso público (sin autenticación)
+        - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
-        - { path: ^/, roles: ROLE_USER }
-        - { path: ^/usuarios, roles: ROLE_USER }
-        - { path: ^/grupos, roles: ROLE_USER }
+        
+        # Rutas que requieren roles específicos (van ANTES que la regla general)
+        - { path: ^/usuarios, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        
+        # Rutas para usuarios autenticados
+        - { path: ^/grupo, roles: ROLE_USER }
         - { path: ^/task, roles: ROLE_USER }
         - { path: ^/tag, roles: ROLE_USER }
-        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/profile, roles: ROLE_USER }
+        
+        # Regla general: todo lo demás requiere estar autenticado (va AL FINAL)
+        - { path: ^/, roles: ROLE_USER }
 
 when@test:
     security:
