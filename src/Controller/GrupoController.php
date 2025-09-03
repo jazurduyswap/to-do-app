@@ -9,9 +9,11 @@ use App\Entity\Grupo;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
 
+#[IsGranted('ROLE_USER')]
 final class GrupoController extends AbstractController
 {
     #[Route('/grupo', name: 'grupo_index', methods: ['GET'])]

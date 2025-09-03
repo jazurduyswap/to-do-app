@@ -6,6 +6,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\UsuariosRepository;
 use App\Entity\Usuarios;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -15,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/usuarios')]
+#[IsGranted('ROLE_ADMIN')]
 class UsuariosController extends AbstractController
 {   
     // Get All collection
