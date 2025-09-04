@@ -5,20 +5,18 @@ namespace App\Form;
 use App\Entity\Tag;
 use App\Entity\Task;
 use App\Entity\Usuarios;
-use App\Repository\TagRepository;
-use App\Form\TagNameType;
 use App\Form\SubTaskNameType;
-
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Form\TagNameType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
 
-class TaskType extends AbstractType
+class TaskNewType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -40,12 +38,31 @@ class TaskType extends AbstractType
                     ])
                 ]
             ])
-            // EntityType solo permite una asociasion directa, para poder CRUD usar CollectionType
             ->add('parentTask', EntityType::class, [
                 'class' => Task::class,
-                'choice_label' => 'titulo', // o 'id' si no hay título
+                'choice_label' => 'titulo',
                 'placeholder' => 'Sin tarea padre',
                 'required' => false,
+                'label' => 'Tarea Padre'
+            ])
+            ->add('childTasks', CollectionType::class, [
+                'entry_type' => SubTaskNameType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'required' => false,
+                'label' => 'Subtareas'
+            ])
+            ->add('tags', CollectionType::class, [
+                'entry_type' => TagNameType::class,
+                'entry_options' => ['label' => false],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+                'mapped' => false,
+                'required' => false,
+                'label' => 'Tags nuevos'
             ])
             ->add('tagsExistentes', EntityType::class, [
                 'class' => Tag::class,
@@ -65,39 +82,19 @@ class TaskType extends AbstractType
                     'class' => 'form-check-label'
                 ]
             ])
-            ->add('childTasks', CollectionType::class, [
-                'entry_type' => SubTaskNameType::class,
-                'entry_options' => ['label' => false],
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-            ])
-            ->add('newTags', CollectionType::class, [
-                'entry_type' => TagNameType::class,
-                'entry_options' => ['label' => false],
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-                'mapped' => false,
-                'required' => false,
-            ]);
-
-        // Solo mostrar el campo usuario si la opción is_admin es true
-        if (!empty($options['is_admin'])) {
-            $builder->add('usuario', EntityType::class, [
+            ->add('usuario', EntityType::class, [
                 'class' => Usuarios::class,
                 'choice_label' => 'email',
                 'required' => false,
                 'label' => 'Asignar a usuario',
             ]);
-        }
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Task::class,
-            'is_admin' => false,
         ]);
     }
 }

@@ -43,25 +43,24 @@
                     </div>
                 </div>
                 <div class="mb-4">
-                    <h5 class="mb-2">Seleccionar tags existentes</h5>
-                    {{ form_widget(form.tagsExistentes, {'attr': {'class': 'form-select', 'multiple': 'multiple'}}) }}
+                    <h5 class="mb-3">Seleccionar tags existentes</h5>
+                    <div class="row">
+                        {% for choice in form.tagsExistentes %}
+                            <div class="col-md-4 mb-2">
+                                <div class="form-check">
+                                    {{ form_widget(choice, {'attr': {'class': 'form-check-input'}}) }}
+                                    {{ form_label(choice, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                     {{ form_errors(form.tagsExistentes) }}
+                    <small class="form-text text-muted">Selecciona los tags existentes que quieres asociar a esta tarea.</small>
                 </div>
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary btn-lg">Crear Tarea</button>
                 </div>
-                {{ form_end(form) }}
             </div>
         </div>
 </div>
-
-
-<script>
-document
-  .querySelectorAll('.add_item_link')
-  .forEach(btn => {
-      btn.addEventListener("click", addFormToCollection)
-  });
-</script>
-
 {% endblock %}

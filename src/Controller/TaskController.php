@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Form\TaskType;
+use App\Form\TaskNewType;
+use App\Form\TaskEditType;
 use App\Entity\Task;
 use App\Repository\TaskRepository;
 
@@ -55,10 +57,8 @@ final class TaskController extends AbstractController
             throw $this->createAccessDeniedException('No tienes permisos para editar esta tarea.');
         }
         
-        $form = $this->createForm(TaskType::class, $task, [
-            'is_admin' => $this->isGranted('ROLE_ADMIN')
-        ]);
-
+        $form = $this->createForm(TaskEditType::class, $task);
+        
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // Si no es admin, asegurar que la tarea quede asignada al usuario actual
@@ -70,6 +70,7 @@ final class TaskController extends AbstractController
             $entityManager->persist($task);
             $entityManager->flush();
             
+            $this->addFlash('success', 'Tarea actualizada exitosamente');
             return $this->redirectToRoute('task_mostrar', ['id' => $task->getId()]);
         }
 
@@ -101,21 +102,60 @@ final class TaskController extends AbstractController
     public function nuevo(Request $request, TaskRepository $taskRepository, ManagerRegistry $doctrine): Response
     {
         $task = new Task();
-        $form = $this->createForm(TaskType::class, $task, [
-            'is_admin' => $this->isGranted('ROLE_ADMIN')
-        ]);
+        $form = $this->createForm(TaskNewType::class, $task);
         
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $doctrine->getManager();
+            
             // Si no es admin, asignar automáticamente al usuario actual
             if (!$this->isGranted('ROLE_ADMIN')) {
                 $task->setUsuario($this->getUser());
             }
             
-            $entityManager = $doctrine->getManager();
+            // Manejar tags existentes seleccionados
+            $tagsExistentes = $form->get('tagsExistentes')->getData();
+            if ($tagsExistentes) {
+                foreach ($tagsExistentes as $tag) {
+                    $task->addTag($tag);
+                }
+            }
+            
+            // Manejar tags nuevos
+            $newTags = $form->get('tags')->getData();
+            if ($newTags) {
+                foreach ($newTags as $tagData) {
+                    if (!empty($tagData['nombre'])) {
+                        // Buscar si el tag ya existe
+                        $existingTag = $entityManager->getRepository(\App\Entity\Tag::class)->findOneBy(['nombre' => $tagData['nombre']]);
+                        
+                        if (!$existingTag) {
+                            // Crear nuevo tag
+                            $newTag = new \App\Entity\Tag();
+                            $newTag->setNombre($tagData['nombre']);
+                            $entityManager->persist($newTag);
+                            $task->addTag($newTag);
+                        } else {
+                            // Usar tag existente
+                            $task->addTag($existingTag);
+                        }
+                    }
+                }
+            }
+            
+            // Asignar usuario a subtareas si no es admin
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                foreach ($task->getChildTasks() as $childTask) {
+                    if (!$childTask->getUsuario()) {
+                        $childTask->setUsuario($this->getUser());
+                    }
+                }
+            }
+            
             $entityManager->persist($task);
             $entityManager->flush();
             
+            $this->addFlash('success', 'Tarea creada exitosamente');
             return $this->redirectToRoute('task_mostrar', ['id' => $task->getId()]);
         }
         
