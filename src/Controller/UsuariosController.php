@@ -2,16 +2,17 @@
 
 namespace App\Controller;
 
+use App\Repository\UsuariosRepository;
+use App\Entity\Usuarios;
+use App\Form\UsuariosType;
+
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Repository\UsuariosRepository;
-use App\Entity\Usuarios;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\HttpFoundation\Request;
-use App\Form\UsuariosType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -126,5 +127,32 @@ class UsuariosController extends AbstractController
         $em->flush();
         $this->addFlash('success', 'Usuario eliminado correctamente.');
         return $this->redirectToRoute('usuarios_index');
+    }
+
+    // Asign tasks
+
+    #[Route('/{id_usuario<\d+>}/tareas/{id_tarea<\d+>}', name: "usuarios_asignar_tareas", methods: ['GET', 'POST'])]
+    public function asignarTareas($id_usuario, $id_tarea, UsuariosRepository $usuariosRepository, TareasRepository $tareasRepository, Request $request, ManagerRegistry $doctrine): Response
+    {
+        $usuario = $usuariosRepository->findById($id_usuario);
+        if (!$usuario) {
+            throw $this->createNotFoundException('Usuario not found');
+        }
+
+        $form = $this->createForm(AsignarTareasType::class, $usuario);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($usuario);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Tareas asignadas correctamente.');
+            return $this->redirectToRoute('usuarios_mostrar', ['id' => $usuario->getId()]);
+        }
+
+        return $this->render('usuarios/usuarios_asignar_tareas.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 }

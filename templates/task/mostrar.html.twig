@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detalle de Tarea{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">{{ task.titulo }}</h1>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Tarea #{{ task.id }}</h5>
+            <p class="card-text"><strong>Usuario:</strong> {{ task.usuario ? task.usuario.email : 'Sin asignar' }}</p>
+            <p class="card-text"><strong>Tarea padre:</strong> {{ task.parentTask ? task.parentTask.titulo : 'Ninguna' }}</p>
+            <p class="card-text"><strong>Tags:</strong>
+                {% for tag in task.tags %}
+                    <span class="badge bg-primary">{{ tag.nombre }}</span>
+                {% else %}
+                    <span class="text-muted">Sin tags</span>
+                {% endfor %}
+            </p>
+            <p class="card-text"><strong>Subtareas:</strong>
+                {% if task.childTasks|length > 0 %}
+                    <ul>
+                        {% for sub in task.childTasks %}
+                            <li>{{ sub.titulo }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <span class="text-muted">Sin subtareas</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    <a href="{{ path('task_index') }}" class="btn btn-secondary">Volver al listado</a>
+    <a href="{{ path('task_editar', {'id': task.id}) }}" class="btn btn-warning">Editar</a>
+    <form method="post" action="{{ path('task_eliminar', {'id': task.id}) }}" style="display:inline-block" onsubmit="return confirm('¿Seguro que deseas eliminar esta tarea?');">
+        <button class="btn btn-danger">Eliminar</button>
+    </form>
+</div>
+{% endblock %}

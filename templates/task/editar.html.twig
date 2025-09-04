@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Tarea{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">Editar Tarea</h1>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        {{ form_start(form) }}
+        <div class="mb-3">
+          {{ form_label(form.titulo, null, {'label_attr': {'class': 'form-label'}}) }}
+          {{ form_widget(form.titulo, {'attr': {'class': 'form-control'}}) }}
+          {{ form_errors(form.titulo) }}
+        </div>
+        <div class="mb-3">
+          {{ form_label(form.parentTask, null, {'label_attr': {'class': 'form-label'}}) }}
+          {{ form_widget(form.parentTask, {'attr': {'class': 'form-select'}}) }}
+          {{ form_errors(form.parentTask) }}
+        </div>
+        {% if form.usuario is defined %}
+        <div class="mb-3">
+          {{ form_label(form.usuario, null, {'label_attr': {'class': 'form-label'}}) }}
+          {{ form_widget(form.usuario, {'attr': {'class': 'form-select'}}) }}
+          {{ form_errors(form.usuario) }}
+        </div>
+        {% endif %}
+        <div class="mb-4">
+          <h5 class="mb-2">Subtareas</h5>
+          <div data-controller="collection">
+            <div data-collection-target="container"
+                 data-prototype="{{ form_widget(form.childTasks.vars.prototype)|e('html_attr') }}">
+              {{ form_widget(form.childTasks) }}
+            </div>
+            <button type="button" class="btn btn-outline-success mt-2" data-action="collection#add" data-collection-target="addButton">
+              <i class="bi bi-plus-circle"></i> Añadir Subtarea
+            </button>
+          </div>
+        </div>
+        <div class="mb-4">
+          <h5 class="mb-2">Tags nuevos</h5>
+          <div data-controller="collection">
+            <div data-collection-target="container"
+                 data-prototype="{{ form_widget(form.tags.vars.prototype)|e('html_attr') }}">
+              {{ form_widget(form.tags) }}
+            </div>
+            <button type="button" class="btn btn-outline-success mt-2" data-action="collection#add" data-collection-target="addButton">
+              <i class="bi bi-plus-circle"></i> Añadir Tag
+            </button>
+          </div>
+        </div>
+        <div class="mb-4">
+          <h5 class="mb-2">Seleccionar tags existentes</h5>
+          {{ form_widget(form.tagsExistentes, {'attr': {'class': 'form-select', 'multiple': 'multiple'}}) }}
+          {{ form_errors(form.tagsExistentes) }}
+        </div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <a href="{{ path('task_index') }}" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn btn-primary btn-lg">Actualizar Tarea</button>
+        </div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+</div>
+{% endblock %}

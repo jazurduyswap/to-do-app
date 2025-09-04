@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Crear Nueva Tarea{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+        <h1 class="mb-4">Crear Nueva Tarea</h1>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {{ form_start(form) }}
+                <div class="mb-3">
+                    {{ form_label(form.titulo, null) }}
+                    {{ form_widget(form.titulo, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.titulo) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.parentTask, null, {label: 'Tarea Padre'}) }}
+                    {{ form_widget(form.parentTask, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.parentTask) }}
+                </div>
+                <div class="mb-4">
+                    <h5 class="mb-2">Subtareas</h5>
+                    <div data-controller="collection">
+                        <div data-collection-target="container"
+                                 data-prototype="{{ form_widget(form.childTasks.vars.prototype)|e('html_attr') }}">
+                            {{ form_widget(form.childTasks) }}
+                        </div>
+                        <button type="button" class="btn btn-outline-success mt-2" data-action="collection#add" data-collection-target="addButton">
+                            <i class="bi bi-plus-circle"></i> Añadir Subtarea
+                        </button>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h5 class="mb-2">Tags nuevos</h5>
+                    <div data-controller="collection">
+                        <div data-collection-target="container"
+                                 data-prototype="{{ form_widget(form.tags.vars.prototype)|e('html_attr') }}">
+                            {{ form_widget(form.tags) }}
+                        </div>
+                        <button type="button" class="btn btn-outline-success mt-2" data-action="collection#add" data-collection-target="addButton">
+                            <i class="bi bi-plus-circle"></i> Añadir Tag
+                        </button>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <h5 class="mb-2">Seleccionar tags existentes</h5>
+                    {{ form_widget(form.tagsExistentes, {'attr': {'class': 'form-select', 'multiple': 'multiple'}}) }}
+                    {{ form_errors(form.tagsExistentes) }}
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Crear Tarea</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+</div>
+
+
+<script>
+document
+  .querySelectorAll('.add_item_link')
+  .forEach(btn => {
+      btn.addEventListener("click", addFormToCollection)
+  });
+</script>
+
+{% endblock %}

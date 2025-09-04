@@ -30,7 +30,7 @@ class Task
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'tasks')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'tasks', cascade: ['persist', 'remove'])]
     private Collection $tags;
 
     #[ORM\ManyToOne(inversedBy: 'tasks')]

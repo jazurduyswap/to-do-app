@@ -22,16 +22,26 @@
                             <a href="{{ path('usuarios_index') }}" class="btn btn-outline-primary">
                                 <i class="bi bi-people"></i> Usuarios
                             </a>
+                            <a href="{{ path('task_index') }}" class="btn btn-outline-success">
+                                <i class="bi bi-list-task"></i> Todas las Tareas
+                            </a>
+                            <a href="{{ path('tag_index') }}" class="btn btn-outline-info">
+                                <i class="bi bi-tags"></i> Tags
+                            </a>
+                            <a href="{{ path('grupo_index') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-collection"></i> Grupos
+                            </a>
+                        {% else %}
+                            <a href="{{ path('task_index') }}" class="btn btn-outline-success">
+                                <i class="bi bi-list-task"></i> Mis Tareas
+                            </a>
+                            <a href="{{ path('task_nuevo') }}" class="btn btn-outline-primary">
+                                <i class="bi bi-plus-circle"></i> Nueva Tarea
+                            </a>
+                            <a href="{{ path('tag_index') }}" class="btn btn-outline-info">
+                                <i class="bi bi-tags"></i> Tags
+                            </a>
                         {% endif %}
-                        <a href="{{ path('grupo_index') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-collection"></i> Grupos
-                        </a>
-                        <a href="{{ path('task_index') }}" class="btn btn-outline-success">
-                            <i class="bi bi-list-task"></i> Tareas
-                        </a>
-                        <a href="{{ path('tag_index') }}" class="btn btn-outline-warning">
-                            <i class="bi bi-tags"></i> Tags
-                        </a>
                         <hr>
                         <a href="{{ path('app_logout') }}" class="btn btn-danger">
                             <i class="bi bi-box-arrow-right"></i> Cerrar sesión

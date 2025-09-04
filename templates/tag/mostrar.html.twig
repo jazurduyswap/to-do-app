@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detalle de Tag{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">{{ tag.nombre }}</h1>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Tag #{{ tag.id }}</h5>
+            <p class="card-text"><strong>Tareas asociadas:</strong>
+                {% if tag.tasks|length > 0 %}
+                    <ul>
+                        {% for task in tag.tasks %}
+                            <li><a href="{{ path('task_mostrar', {'id': task.id}) }}">{{ task.titulo }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <span class="text-muted">Sin tareas asociadas</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    <a href="{{ path('tag_index') }}" class="btn btn-secondary">Volver al listado</a>
+    <a href="{{ path('tag_editar', {'id': tag.id}) }}" class="btn btn-warning">Editar</a>
+    <form method="post" action="{{ path('tag_eliminar', {'id': tag.id}) }}" style="display:inline-block" onsubmit="return confirm('¿Seguro que deseas eliminar este tag?');">
+        <button class="btn btn-danger">Eliminar</button>
+    </form>
+</div>
+{% endblock %}

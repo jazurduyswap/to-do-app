@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Crear Tag{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h1 class="mb-0">Crear Nuevo Tag</h1>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form) }}
+                    <div class="mb-3">
+                        {{ form_label(form.nombre, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nombre, {'attr': {'class': 'form-control', 'placeholder': 'Ej: Urgente, Personal, Trabajo...'}}) }}
+                        {{ form_errors(form.nombre) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_label(form.tasks, 'Tareas asociadas (opcional)', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.tasks, {'attr': {'class': 'form-select', 'multiple': 'multiple', 'size': '5'}}) }}
+                        {{ form_errors(form.tasks) }}
+                        <div class="form-text">Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples tareas.</div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ path('tag_index') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Crear Tag</button>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
