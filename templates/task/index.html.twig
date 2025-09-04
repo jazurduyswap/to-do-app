@@ -47,7 +47,7 @@
                                         <td>
                                             <strong>{{ task.titulo }}</strong>
                                             {% if task.parentTask %}
-                                                <br><small class="text-muted">Subtarea de: {{ task.parentTask.titulo }}</small>
+                                                <br><small class="text-muted">Tarea padre: {{ task.parentTask.titulo }}</small>
                                             {% endif %}
                                         </td>
                                         {% if is_granted('ROLE_ADMIN') %}
