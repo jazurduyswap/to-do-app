@@ -16,6 +16,13 @@ class Task
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'El título no puede estar vacío')]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'El título debe tener al menos {{ limit }} caracteres',
+        maxMessage: 'El título no puede exceder {{ limit }} caracteres'
+    )]
     private ?string $titulo = null;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'childTasks')]

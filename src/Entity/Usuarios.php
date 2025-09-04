@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UsuariosRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -20,6 +21,13 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'El nombre no puede estar vacío')]
+    #[Assert\Length(
+        min: 2,
+        max: 100,
+        minMessage: 'El nombre debe tener al menos {{ limit }} caracteres',
+        maxMessage: 'El nombre no puede exceder {{ limit }} caracteres'
+    )]
     private ?string $nombre = null;
 
     /**
@@ -35,6 +43,12 @@ class Usuarios implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'El email no puede estar vacío')]
+    #[Assert\Email(message: 'El email debe tener un formato válido')]
+    #[Assert\Length(
+        max: 180,
+        maxMessage: 'El email no puede exceder {{ limit }} caracteres'
+    )]
     private ?string $email = null;
 
     /**

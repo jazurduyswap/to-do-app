@@ -4,17 +4,15 @@ namespace App\Form;
 
 use App\Entity\Usuarios;
 use App\Entity\Grupo;
-use App\Form\GrupoType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class RegistrationFormType extends AbstractType
@@ -23,31 +21,61 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('nombre', TextType::class, [
+                'label' => 'Nombre de Usuario',
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingresa tu nombre de usuario',
+                    'maxlength' => 180
+                ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Por favor ingresa un nombre',
+                        'message' => 'Por favor ingresa un nombre de usuario',
                     ]),
                     new Length([
                         'min' => 2,
                         'minMessage' => 'El nombre debe tener al menos {{ limit }} caracteres',
-                        'max' => 255,
+                        'max' => 180,
+                        'maxMessage' => 'El nombre no puede exceder los {{ limit }} caracteres',
                     ]),
                 ],
             ])
-            ->add('email')
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+            ->add('email', EmailType::class, [
+                'label' => 'Correo Electrónico',
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'ejemplo@correo.com',
+                    'maxlength' => 180
+                ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Por favor ingresa tu correo electrónico',
+                    ]),
+                    new Email([
+                        'message' => 'Por favor ingresa un correo electrónico válido',
+                    ]),
+                    new Length([
+                        'max' => 180,
+                        'maxMessage' => 'El correo no puede exceder los {{ limit }} caracteres',
+                    ]),
+                ],
+            ])
+            ->add('plainPassword', PasswordType::class, [
+                'label' => 'Contraseña',
+                'mapped' => false,
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                    'class' => 'form-control',
+                    'placeholder' => 'Ingresa una contraseña segura',
+                    'minlength' => 6
+                ],
+                'help' => 'La contraseña debe tener al menos 6 caracteres',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Por favor ingresa una contraseña',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
+                        'minMessage' => 'Tu contraseña debe tener al menos {{ limit }} caracteres',
                         'max' => 4096,
                     ]),
                 ],
@@ -57,6 +85,12 @@ class RegistrationFormType extends AbstractType
                 'choice_label' => 'nombre',
                 'multiple' => true,
                 'expanded' => true,
+                'required' => false,
+                'label' => 'Grupos (Opcional)',
+                'help' => 'Puedes seleccionar los grupos a los que quieres unirte',
+                'attr' => [
+                    'class' => 'form-check-input'
+                ]
             ])
         ;
     }

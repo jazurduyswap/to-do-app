@@ -6,8 +6,14 @@ use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
+#[UniqueEntity(
+    fields: ['nombre'],
+    message: 'Ya existe un tag con este nombre'
+)]
 class Tag
 {
     #[ORM\Id]
@@ -16,6 +22,17 @@ class Tag
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'El nombre no puede estar vacío')]
+    #[Assert\Length(
+        min: 2,
+        max: 50,
+        minMessage: 'El nombre debe tener al menos {{ limit }} caracteres',
+        maxMessage: 'El nombre no puede exceder {{ limit }} caracteres'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-Z0-9\s\-\_áéíóúñÁÉÍÓÚÑ]+$/',
+        message: 'El nombre solo puede contener letras, números, espacios, guiones y guiones bajos'
+    )]
     private ?string $nombre = null;
 
     /**
