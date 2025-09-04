@@ -6,6 +6,7 @@ use App\Repository\TaskRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
@@ -43,10 +44,17 @@ class Task
     #[ORM\ManyToOne(inversedBy: 'tasks')]
     private ?Usuarios $usuario = null;
 
+    /**
+     * @var Collection<int, File>
+     */
+    #[ORM\OneToMany(targetEntity: File::class, mappedBy: 'task')]
+    private Collection $files;
+
     public function __construct()
     {
         $this->childTasks = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -138,6 +146,36 @@ class Task
     public function setUsuario(?Usuarios $usuario): static
     {
         $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, File>
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(File $file): static
+    {
+        if (!$this->files->contains($file)) {
+            $this->files->add($file);
+            $file->setTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(File $file): static
+    {
+        if ($this->files->removeElement($file)) {
+            // set the owning side to null (unless already changed)
+            if ($file->getTask() === $this) {
+                $file->setTask(null);
+            }
+        }
 
         return $this;
     }
