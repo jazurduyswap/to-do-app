@@ -78,4 +78,11 @@ class File
 
         return $this;
     }
+
+    public function uploadedFile(): bool
+    {
+        // Verifica si el archivo existe físicamente en la ruta indicada
+        $path = __DIR__ . '/../../public/' . $this->getRuta();
+        return file_exists($path);
+    }
 }

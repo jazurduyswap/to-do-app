@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detalles de {{ file.nombre }}{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Detalles del Archivo</h1>
+        <div>
+            <a href="{{ path('task_mostrar', {'id': file.task.id}) }}" class="btn btn-secondary me-2">
+                <i class="bi bi-arrow-left"></i> Volver a la tarea
+            </a>
+            <a href="{{ path('file_list', {'taskId': file.task.id}) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-files"></i> Ver todos los archivos
+            </a>
+        </div>
+    </div>
+    
+    {# Flash messages #}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type == 'error' ? 'danger' : (type == 'success' ? 'success' : 'info') }} alert-dismissible fade show">
+                <i class="bi bi-{{ type == 'error' ? 'exclamation-triangle' : (type == 'success' ? 'check-circle' : 'info-circle') }}"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        {% if file.mimeType starts with 'image/' %}
+                            <i class="bi bi-image text-primary"></i>
+                        {% elseif file.mimeType == 'application/pdf' %}
+                            <i class="bi bi-file-earmark-pdf text-danger"></i>
+                        {% elseif file.mimeType starts with 'application/vnd.ms-excel' or file.mimeType starts with 'application/vnd.openxmlformats-officedocument.spreadsheetml' %}
+                            <i class="bi bi-file-earmark-excel text-success"></i>
+                        {% elseif file.mimeType starts with 'application/msword' or file.mimeType starts with 'application/vnd.openxmlformats-officedocument.wordprocessingml' %}
+                            <i class="bi bi-file-earmark-word text-primary"></i>
+                        {% else %}
+                            <i class="bi bi-file-earmark text-secondary"></i>
+                        {% endif %}
+                        {{ file.nombre }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if file.mimeType starts with 'image/' and fileInfo.exists %}
+                        <div class="text-center mb-3">
+                            <img src="{{ path('file_view', {'id': file.id}) }}" class="img-fluid rounded" style="max-height: 400px;" alt="{{ file.nombre }}">
+                        </div>
+                    {% endif %}
+                    
+                    <dl class="row">
+                        <dt class="col-sm-3">Nombre original:</dt>
+                        <dd class="col-sm-9">{{ file.nombre }}</dd>
+                        
+                        <dt class="col-sm-3">Tipo de archivo:</dt>
+                        <dd class="col-sm-9">
+                            <span class="badge bg-light text-dark">{{ file.mimeType }}</span>
+                        </dd>
+                        
+                        <dt class="col-sm-3">Tamaño:</dt>
+                        <dd class="col-sm-9">
+                            {% if fileInfo.exists %}
+                                {% set sizeKB = (fileInfo.size / 1024)|round(1) %}
+                                {% if sizeKB > 1024 %}
+                                    {{ (sizeKB / 1024)|round(1) }} MB
+                                {% else %}
+                                    {{ sizeKB }} KB
+                                {% endif %}
+                                <small class="text-muted">({{ fileInfo.size }} bytes)</small>
+                            {% else %}
+                                <span class="text-danger">Archivo no encontrado en el servidor</span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-3">Estado:</dt>
+                        <dd class="col-sm-9">
+                            {% if fileInfo.exists %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Disponible
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-exclamation-triangle"></i> No encontrado
+                                </span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-3">Tarea:</dt>
+                        <dd class="col-sm-9">
+                            <a href="{{ path('task_mostrar', {'id': file.task.id}) }}" class="text-decoration-none">
+                                {{ file.task.titulo }}
+                            </a>
+                        </dd>
+                        
+                        <dt class="col-sm-3">Archivo interno:</dt>
+                        <dd class="col-sm-9">
+                            <code>{{ file.ruta }}</code>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-gear"></i> Acciones
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        {% if file.mimeType starts with 'image/' %}
+                            <a href="{{ path('file_view', {'id': file.id}) }}" class="btn btn-outline-info" target="_blank">
+                                <i class="bi bi-eye"></i> Ver imagen
+                            </a>
+                        {% endif %}
+                        
+                        {% if fileInfo.exists %}
+                            <a href="{{ path('file_download', {'id': file.id}) }}" class="btn btn-primary">
+                                <i class="bi bi-download"></i> Descargar archivo
+                            </a>
+                        {% endif %}
+                        
+                        <form method="post" action="{{ path('file_delete', {'id': file.id}) }}" onsubmit="return confirm('¿Seguro que deseas eliminar este archivo? Esta acción no se puede deshacer.');">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="bi bi-trash"></i> Eliminar archivo
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle"></i> Información
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        <p><strong>ID:</strong> {{ file.id }}</p>
+                        <p><strong>Propietario:</strong> {{ file.task.usuario ? file.task.usuario.email : 'Sin asignar' }}</p>
+                        <p class="mb-0"><strong>Ubicación:</strong><br>
+                        <code>uploads/tasks/{{ file.task.id }}/{{ file.ruta }}</code></p>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -30,7 +30,9 @@
             </p>
         </div>
     </div>
+
     <a href="{{ path('task_index') }}" class="btn btn-secondary">Volver al listado</a>
+    <a href="{{ path('task_file', {'id': task.id}) }}" class="btn btn-info">Archivos</a>
     <a href="{{ path('task_editar', {'id': task.id}) }}" class="btn btn-warning">Editar</a>
     <form method="post" action="{{ path('task_eliminar', {'id': task.id}) }}" style="display:inline-block" onsubmit="return confirm('¿Seguro que deseas eliminar esta tarea?');">
         <button class="btn btn-danger">Eliminar</button>
