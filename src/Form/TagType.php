@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Tag;
+use App\Entity\Task;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -15,13 +17,8 @@ class TagType extends AbstractType
         $builder
             ->add('nombre', TextType::class, [
                 'label' => 'Nombre del Tag',
-                'attr' => [
-                    'class' => 'form-control',
-                    'placeholder' => 'Ingresa el nombre del tag',
-                    'maxlength' => 50
-                ]
-            ])
-        ;
+                'required' => true
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
